@@ -61,6 +61,8 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
+            /* Se asegura que el botón SÍ mantenga su origen de alineación */
+            transform-origin: center center;
         }
 
         #subtexto-si {
@@ -74,6 +76,7 @@
             background: #333;
             color: #ddd;
             z-index: 25;
+            touch-action: manipulation;
         }
 
         .credits {
@@ -98,7 +101,7 @@
             <span>Sí</span>
             <span id="subtexto-si"></span>
         </button>
-        <button id="no" onclick="rechazar()" onmouseover="esquivarYCrecer()">No</button>
+        <button id="no" onclick="interaccionNo(event)" onmouseover="interaccionNo(event)" ontouchstart="interaccionNo(event)">No</button>
     </div>
 </div>
 
@@ -141,7 +144,6 @@
 
         btnSi.style.transform = `scale(${escala})`;
 
-        // Muestra el subtexto dentro del botón Sí de forma escalonada
         subtexto.style.display = "block";
         if (intentos < textosNo.length) {
             subtexto.innerText = textosNo[intentos];
@@ -152,7 +154,9 @@
         intentos++;
     }
 
-    function esquivarYCrecer() {
+    function interaccionNo(e) {
+        if (e) e.preventDefault(); // Previene toques dobles o clics por defecto en móviles
+
         const btnNo = document.getElementById("no");
         btnNo.style.position = "fixed";
 
@@ -161,24 +165,6 @@
         btnNo.style.top = `${pos.y}px`;
 
         actualizarBotonSi();
-    }
-
-    function rechazar() {
-        actualizarBotonSi();
-        const btnSi = document.getElementById("si");
-        const btnNo = document.getElementById("no");
-
-        btnSi.style.position = "fixed";
-        btnNo.style.position = "fixed";
-
-        const posSi = obtenerPosicionAleatoria(btnSi);
-        const posNo = obtenerPosicionAleatoria(btnNo);
-
-        btnSi.style.left = `${posSi.x}px`;
-        btnSi.style.top = `${posSi.y}px`;
-
-        btnNo.style.left = `${posNo.x}px`;
-        btnNo.style.top = `${posNo.y}px`;
     }
 
     function aceptar() {
