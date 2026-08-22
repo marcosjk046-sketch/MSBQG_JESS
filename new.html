@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For: Jessica</title>
+
+    <!-- Previsualización -->
+    <meta property="og:title" content="For: Jessica">
+    <meta property="og:description" content="Tengo una propuesta especial para ti... ✨">
+    <meta property="og:type" content="website">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100vw;
+            background: linear-gradient(180deg, #1f1d36 0%, #3f2e56 35%, #7a4069 65%, #c87961 88%, #162032 100%);
+            overflow: hidden;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .card {
+            background: rgba(26, 29, 45, 0.9);
+            backdrop-filter: blur(12px);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 480px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #f1f5f9;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        p {
+            color: #cbd5e1;
+            font-size: 15px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            min-height: 80px;
+            position: relative;
+        }
+
+        button {
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Botón SÍ: centrado y con crecimiento mayor por cada intento */
+        #btn-yes {
+            background-color: #d97736;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(217, 119, 54, 0.35);
+            z-index: 100;
+            white-space: nowrap;
+            transform-origin: center center;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+        }
+
+        #btn-yes:hover {
+            background-color: #c2652b;
+        }
+
+        /* Botón de Rendición */
+        #btn-giveup {
+            display: none;
+            background-color: #475569;
+            color: #f8fafc;
+            box-shadow: 0 4px 14px rgba(71, 85, 105, 0.35);
+            z-index: 100;
+            white-space: nowrap;
+            transform-origin: center center;
+            transition: transform 0.2s ease;
+        }
+
+        #btn-giveup:hover {
+            background-color: #334155;
+        }
+
+        /* Botón NO */
+        #btn-no {
+            background-color: #334155;
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            z-index: 9999;
+            white-space: nowrap;
+            touch-action: none;
+            transition: left 0.12s ease-out, top 0.12s ease-out;
+        }
+
+        /* Pantalla 2: Ruleta */
+        #game-two {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .roulette-box {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px dashed #e9a17b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin: 10px auto;
+            transition: transform 3s cubic-bezier(0.2, 0.8, 0.3, 1);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        #spin-btn {
+            background-color: #d97736;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(217, 119, 54, 0.35);
+        }
+
+        #spin-btn:hover {
+            background-color: #c2652b;
+        }
+
+        /* Pantalla Final */
+        .success-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .success-screen h2 {
+            color: #f8fafc;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="main-card">
+        <!-- Fase 1: Juego del botón -->
+        <div id="game-one">
+            <h1 id="main-title">Jessica, ¿vamos a la playa? ✨</h1>
+            <p id="sub-title">Un atardecer frente al mar no se rechaza tan fácil 😉</p>
+
+            <div class="buttons-container" id="btn-container">
+                <button id="btn-yes" onclick="acceptOffer()">Sí, vamos ✨</button>
+                <button id="btn-giveup" onclick="startSecondGame()">Okey tu ganas acepto el no 😔</button>
+                <button id="btn-no" onpointerenter="handleNoInteraction(event)" onpointerdown="handleNoInteraction(event)" onclick="handleNoClick(event)">No</button>
+            </div>
+        </div>
+
+        <!-- Fase 2: Ruleta -->
+        <div id="game-two">
+            <h1>Ruleta del destino 🎰</h1>
+            <p>Ya que insististe tanto con el no, veamos qué define la suerte:</p>
+            
+            <div class="roulette-box" id="roulette-wheel">Girar</div>
+            <p id="roulette-status" style="font-weight: 500; color: #e9a17b; min-height: 22px;"></p>
+
+            <button id="spin-btn" onclick="spinRoulette()">Girar ruleta 🎲</button>
+        </div>
+
+        <!-- Pantalla Final -->
+        <div class="success-screen" id="success-content">
+            <h2>Plan confirmado ✨</h2>
+            <p id="final-message">Nos vemos en la playa para ver el atardecer 🌅</p>
+        </div>
+    </div>
+
+    <script>
+        const btnNo = document.getElementById('btn-no');
+        const btnYes = document.getElementById('btn-yes');
+        const btnGiveUp = document.getElementById('btn-giveup');
+        const mainTitle = document.getElementById('main-title');
+        
+        let attempts = 0;
+        let scale = 1;
+        let isDetached = false;
+
+        const messages = [
+            "¿Segura? 🤔", "Piénsalo mejor ✨", "Casi, pero no 💨", "Intenta otra vez 😂",
+            "Opción no disponible 🔒", "Botón equivocado 😜", "Esa no era la idea 🙅‍♂️",
+            "El sí queda mejor ✨", "Demasiado lenta 🏃‍♀️💨", "¿Tanto lo dudas? 🥺",
+            "Ruta bloqueada 🚫", "El mar espera 🌊", "Te quedas sin espacio 😱",
+            "Es mejor decir que sí ✨", "No se puede presionar 🛡️", "¿Otra vez? 🙄",
+            "Buen intento 🚀", "Sigues intentando 😅", "El sí sigue creciendo 👀",
+            "Insistente 💪", "No vas a poder 😜", "Movimiento en vano 🧭",
+            "Por ahí no 💨", "La playa suena mejor 🌅", "Sigue participando 🎟️",
+            "Opción denegada ❌", "Elige el otro 💚", "Aún con dudas 🧐",
+            "Casi le das 😜", "Menos opciones ⏳", "Este botón no cede 🪄",
+            "Es inevitable 🪐", "Más de 30 intentos 📈", "Un clic al sí y listo 😉",
+            "¡Ya me cansé! 🏳️"
+        ];
+
+        function handleNoInteraction(e) {
+            if (e.type === 'pointerdown' && e.pointerType === 'mouse') return;
+            if (attempts >= 34) return;
+            
+            e.preventDefault();
+            dodge();
+        }
+
+        function handleNoClick(e) {
+            if (attempts >= 34) {
+                btnYes.style.display = 'none';
+                btnNo.style.display = 'none';
+                btnGiveUp.style.display = 'inline-block';
+                btnGiveUp.style.transform = `scale(${scale})`;
+                mainTitle.innerText = "Está bien, me rindo 🏳️";
+            } else {
+                e.preventDefault();
+                dodge();
+            }
+        }
+
+        function dodge() {
+            if (!isDetached) {
+                document.body.appendChild(btnNo);
+                btnNo.style.position = 'fixed';
+                isDetached = true;
+            }
+
+            btnNo.innerText = messages[attempts];
+            attempts++;
+
+            // Incremento de tamaño acelerado (0.08 por intento para que gane volumen visible)
+            scale += 0.08;
+            btnYes.style.transform = `scale(${scale})`;
+
+            // Coordenadas aleatorias asegurando separación física con el botón SÍ
+            const padding = 20;
+            const btnW = btnNo.offsetWidth || 120;
+            const btnH = btnNo.offsetHeight || 45;
+
+            const screenW = window.innerWidth;
+            const screenH = window.innerHeight;
+
+            const maxX = Math.max(padding, screenW - btnW - padding);
+            const maxY = Math.max(padding, screenH - btnH - padding);
+
+            const yesRect = btnYes.getBoundingClientRect();
+
+            let randomX, randomY;
+            let overlapping = true;
+            let tries = 0;
+
+            while (overlapping && tries < 100) {
+                randomX = Math.floor(Math.random() * (maxX - padding)) + padding;
+                randomY = Math.floor(Math.random() * (maxY - padding)) + padding;
+
+                const margin = 50;
+                const overlapsX = (randomX + btnW > yesRect.left - margin) && (randomX < yesRect.right + margin);
+                const overlapsY = (randomY + btnH > yesRect.top - margin) && (randomY < yesRect.bottom + margin);
+
+                if (!overlapsX || !overlapsY) {
+                    overlapping = false;
+                }
+                tries++;
+            }
+
+            btnNo.style.left = `${randomX}px`;
+            btnNo.style.top = `${randomY}px`;
+        }
+
+        function startSecondGame() {
+            btnNo.style.display = 'none';
+            document.getElementById('game-one').style.display = 'none';
+            document.getElementById('game-two').style.display = 'flex';
+        }
+
+        function spinRoulette() {
+            const wheel = document.getElementById('roulette-wheel');
+            const status = document.getElementById('roulette-status');
+            const spinBtn = document.getElementById('spin-btn');
+            
+            spinBtn.disabled = true;
+            status.innerText = "Girando...";
+            
+            const randomRotation = 1440 + Math.floor(Math.random() * 360);
+            wheel.style.transform = `rotate(${randomRotation}deg)`;
+
+            setTimeout(() => {
+                wheel.innerText = "Playa 🌅";
+                status.innerText = "Resultado: Salida a la playa";
+                
+                setTimeout(() => {
+                    document.getElementById('game-two').style.display = 'none';
+                    document.getElementById('success-content').style.display = 'flex';
+                    document.getElementById('final-message').innerText = "La ruleta decidió por ti. Nos vemos en la playa 🌅✨";
+                }, 2000);
+            }, 3000);
+        }
+
+        function acceptOffer() {
+            btnNo.style.display = 'none';
+            document.getElementById('game-one').style.display = 'none';
+            document.getElementById('game-two').style.display = 'none';
+            document.getElementById('success-content').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
