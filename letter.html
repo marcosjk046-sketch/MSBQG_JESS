@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Merriweather:ital,wght@0,300;0,400;1,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: radial-gradient(circle at 50% 40%, #151a22 0%, #0a0d12 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Merriweather', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #2b303a;
+      perspective: 1000px;
+    }
+    #ambientCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .wrapper {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 15px;
+    }
+    /* Sobre sobrio */
+    .envelope-box {
+      width: 330px;
+      height: 220px;
+      background: #1c2430;
+      position: relative;
+      border-radius: 0 0 6px 6px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75), 0 0 20px rgba(58, 80, 107, 0.2);
+      cursor: pointer;
+      transition: transform 0.4s ease, opacity 0.6s ease;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .envelope-box:hover {
+      transform: translateY(-4px);
+    }
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 165px solid transparent;
+      border-right: 165px solid transparent;
+      border-top: 120px solid #283344;
+      transform-origin: top;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 5;
+    }
+    .pocket-left {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      border-left: 165px solid #161c26;
+      border-top: 110px solid transparent;
+      border-bottom: 110px solid #161c26;
+      border-radius: 0 0 0 6px;
+      z-index: 3;
+    }
+    .pocket-right {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      border-right: 165px solid #161c26;
+      border-top: 110px solid transparent;
+      border-bottom: 110px solid #161c26;
+      border-radius: 0 0 6px 0;
+      z-index: 3;
+    }
+    .pocket-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 165px solid transparent;
+      border-right: 165px solid transparent;
+      border-bottom: 125px solid #11161f;
+      border-radius: 0 0 6px 6px;
+      z-index: 4;
+    }
+    .seal {
+      position: absolute;
+      top: 105px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px;
+      height: 48px;
+      background: radial-gradient(circle, #3a506b 0%, #1c2541 100%);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #e0e6ed;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6), inset 0 0 6px rgba(255,255,255,0.2);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 6;
+      transition: opacity 0.4s ease;
+    }
+    .hint-text {
+      color: #9baec4;
+      margin-top: 25px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: pulseText 2.4s infinite ease-in-out;
+    }
+    @keyframes pulseText {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; text-shadow: 0 0 8px rgba(155, 174, 196, 0.4); }
+    }
+
+    /* Hoja de papel */
+    .letter-paper {
+      width: 90vw;
+      max-width: 660px;
+      max-height: 85vh;
+      background: #fafaf8;
+      border-radius: 6px;
+      padding: 50px 45px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+      border: 1px solid #ddd9d2;
+      display: none;
+      opacity: 0;
+      transform: translateY(25px) scale(0.97);
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #7b8fa3 #eae8e3;
+    }
+    .letter-paper::-webkit-scrollbar {
+      width: 5px;
+    }
+    .letter-paper::-webkit-scrollbar-thumb {
+      background: #7b8fa3;
+      border-radius: 4px;
+    }
+    .letter-paper.open {
+      display: block;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Encabezado simple y sobrio */
+    .letter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #e2ded7;
+      padding-bottom: 15px;
+    }
+    .header-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .meta-line {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      color: #3e4756;
+      letter-spacing: 0.3px;
+    }
+    .meta-label {
+      font-weight: 600;
+      color: #1a2230;
+      margin-right: 4px;
+    }
+    .letter-date {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: #7a828e;
+      letter-spacing: 0.5px;
+    }
+
+    /* Cuerpo del texto */
+    .letter-body {
+      font-size: 1.02rem;
+      line-height: 2.05;
+      color: #2e333d;
+      text-align: justify;
+      font-weight: 300;
+    }
+    .letter-body p {
+      margin-bottom: 20px;
+      text-indent: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .letter-paper {
+        padding: 35px 22px;
+      }
+      .letter-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .letter-body {
+        font-size: 0.95rem;
+        line-height: 1.9;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="ambientCanvas"></canvas>
+
+  <div class="wrapper">
+    <div id="envelope" class="envelope-box" onclick="abrirCarta()">
+      <div id="flap" class="flap"></div>
+      <div class="pocket-left"></div>
+      <div class="pocket-right"></div>
+      <div class="pocket-bottom"></div>
+      <div id="seal" class="seal">J</div>
+    </div>
+    <div id="hint" class="hint-text">Toca para abrir</div>
+
+    <div id="letterPaper" class="letter-paper">
+      <div class="letter-header">
+        <div class="header-info">
+          <div class="meta-line"><span class="meta-label">Para:</span> Jessica</div>
+          <div class="meta-line"><span class="meta-label">De:</span> Marcos Santos</div>
+        </div>
+        <div class="letter-date">7 de septiembre de 2026</div>
+      </div>
+      
+      <div class="letter-body">
+        <p>
+          Para empezar ya no espero nada, perdi la oportunidad en su momento, pero igual sigo aqui por orem,...
+        </p>
+        <p>
+          No tube unos buenos dias que digamos, le estube dando muchas vueltas a las cosas mi actuar no fue el mejor que digamos en general reconocozco que tengo que aprender a vivir y experimentar, como tambien azumir ciertas concuencias, reconozco tambien que no soy lo sufientemente detallista o imaginativo en cuanto salidas y... mas alla del dinero, el tiempo entre otras cosas son defectos mios que reconzco! valga la redundancia, siempre lo eh oido, siempre me lo dicen es mi deber, basicamente mi trabajo en otras palabras si ya venia saliendo contigo, de una manera lo mas correcto ubiese sido llevarte a algun lugar bonito, salir a comer, bailar, tomar, cualquier cosa algun detalle grande, te veias bonita, bastante areglada quizas no lo mencione en ese momento, un gran error,son detalles de los que devo aprender no porque me oblige a hacerlo, si no porque debo porque es mmi deber serlo, porque son cosas que de lo que debo aprender lo lo estoy haciendo quizas no de la manera mas rapida que digamos pero lo ago, ya se que no estas para estas cosas que no deberias soportarlas, y eso te lo dirian muchas personas, y lo se, pero esque como se dieron las cosas estoy muy seguro de todo ahora, quizas sea muy intenso o tonto de mi parte seguir rogando, si las cosas se ubiesen dado de manera distinta en otra situacion quizas, y si lo se todo tiene un limite y con esto no busco otra cosa mas que el veneficio de la duda, que me dees ese benficio como ultimo respiro.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function abrirCarta() {
+      const flap = document.getElementById("flap");
+      const seal = document.getElementById("seal");
+      const envelope = document.getElementById("envelope");
+      const hint = document.getElementById("hint");
+      const letterPaper = document.getElementById("letterPaper");
+
+      flap.style.transform = "rotateX(180deg)";
+      seal.style.opacity = "0";
+      hint.style.opacity = "0";
+
+      setTimeout(() => {
+        envelope.style.opacity = "0";
+        envelope.style.transform = "scale(0.85) translateY(-30px)";
+        setTimeout(() => {
+          envelope.style.display = "none";
+          hint.style.display = "none";
+          letterPaper.classList.add("open");
+        }, 400);
+      }, 500);
+    }
+
+    const canvas = document.getElementById("ambientCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    const particles = [];
+    for (let i = 0; i < 35; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 1.5 + 0.8,
+        speedY: Math.random() * 0.35 + 0.15,
+        speedX: (Math.random() - 0.5) * 0.25,
+        alpha: Math.random() * 0.35 + 0.1
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.fillStyle = "#8fa3bf";
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.y -= p.speedY;
+        p.x += p.speedX;
+
+        if (p.y < -10) {
+          p.y = height + 10;
+          p.x = Math.random() * width;
+        }
+
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
