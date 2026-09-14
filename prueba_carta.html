@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enviar Respuesta</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .card {
+      background-color: #1e293b;
+      padding: 35px;
+      border-radius: 10px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      border: 1px solid #334155;
+    }
+    h2 {
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+      color: #f8fafc;
+    }
+    p.subtitle {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #cbd5e1;
+    }
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: #38bdf8;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Escribe tu respuesta</h2>
+    <p class="subtitle">El mensaje llegará directamente a mi bandeja de entrada.</p>
+
+    <!-- Usando tu enlace seguro en vez de tu correo expuesto -->
+    <form action="https://formsubmit.co/el/witoki" method="POST">
+      
+      <input type="hidden" name="_subject" value="Nueva respuesta recibida desde GitHub">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      
+      <!-- Opcional: coloca aquí el link de tu GitHub Pages si quieres que regrese tras enviar -->
+      <!-- <input type="hidden" name="_next" value="https://tu-usuario.github.io/tu-repositorio/"> -->
+
+      <div class="form-group">
+        <label for="nombre">Nombre o apodo (opcional):</label>
+        <input type="text" id="nombre" name="Nombre" placeholder="Tu nombre...">
+      </div>
+
+      <div class="form-group">
+        <label for="mensaje">Mensaje:</label>
+        <textarea id="mensaje" name="Mensaje" placeholder="Escribe aquí tu respuesta..." required></textarea>
+      </div>
+
+      <button type="submit">Enviar respuesta</button>
+    </form>
+  </div>
+
+</body>
+</html>
